@@ -1,5 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe RollCall, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'relationships' do
+    it { should belong_to :bill }
+    it { should have_many :legislator_votes }
+    it { should have_many(:legislators).through(:legislator_votes) }
+  end
 end
