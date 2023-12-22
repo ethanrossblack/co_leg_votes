@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_22_232359) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_22_232806) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232359) do
     t.string "bill_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "legislator_votes", force: :cascade do |t|
+    t.bigint "legislator_id", null: false
+    t.bigint "roll_call_id", null: false
+    t.integer "vote"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["legislator_id"], name: "index_legislator_votes_on_legislator_id"
+    t.index ["roll_call_id"], name: "index_legislator_votes_on_roll_call_id"
   end
 
   create_table "legislators", force: :cascade do |t|
@@ -66,6 +76,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232359) do
     t.index ["bill_id"], name: "index_roll_calls_on_bill_id"
   end
 
+  add_foreign_key "legislator_votes", "legislators"
+  add_foreign_key "legislator_votes", "roll_calls"
   add_foreign_key "roll_call_votes", "bills"
   add_foreign_key "roll_calls", "bills"
 end
