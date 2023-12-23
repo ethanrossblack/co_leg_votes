@@ -3,7 +3,7 @@ require 'json'
 namespace :import_data do
   desc "load bill data"
   task bills: :environment do
-    puts "Loading Bills..."
+    puts "\nLOADING BILLS...\n\n"
     Bill.destroy_all
 
     bill_directory = "db/data/2023-2023_Regular_Session/bill"
@@ -36,6 +36,105 @@ namespace :import_data do
       puts "Imported #{bill_number}: #{title}"
     end
 
-    puts "\nAll bill imported!\n"
+    puts "\nALL BILLS IMPORTED!\n"
+  end
+
+  desc "Load Legislator Data"
+  task legislators: :environment do
+    puts "\nLOADING LEGISLATORS...\n\n"
+    Legislator.destroy_all
+
+    legislator_directory = "db/data/2023-2023_Regular_Session/people"
+
+    Dir.each_child(legislator_directory) do |legislator|
+      legislator_file = File.open "#{legislator_directory}/#{legislator}"
+      
+      legislator_json = JSON.load legislator_file
+
+      legislator_data = legislator_json["person"]
+
+      legislator_id = legislator_data["people_id"]
+      party         = legislator_data["party_id"].to_i
+      title         = legislator_data["role"]
+      first_name    = legislator_data["first_name"]
+      middle_name   = legislator_data["middle_name"]
+      last_name     = legislator_data["last_name"]
+      suffix        = legislator_data["suffix"]
+      nickname      = legislator_data["nickname"]
+      district      = legislator_data["district"]
+      chamber       = legislator_data["role_id"]
+
+      Legislator.create(
+        id: legislator_id,
+        party: party,
+        title: title,
+        first_name: first_name,
+        middle_name: middle_name,
+        last_name: last_name,
+        suffix: suffix,
+        nickname: nickname,
+        district: district,
+        chamber: chamber
+      )
+
+      legislator_file.close
+
+      puts "Imported #{title}. #{first_name} #{last_name} (#{district})"
+    end
+
+    puts "\nALL LEGISLATORS IMPORTED!\n\n"
+  end
+  
+  desc "Load Vote Data"
+  task votes: :environment do
+    puts "\nLOADING VOTING DATA...\n\n"
+    
+    RollCall.destroy_all
+    LegislatorVote.destroy_all
+
+    legislator_directory = "db/data/2023-2023_Regular_Session/vote"
+
+    Dir.each_child(legislator_directory) do |legislator|
+      legislator_file = File.open "#{legislator_directory}/#{legislator}"
+      
+      legislator_json = JSON.load legislator_file
+
+      legislator_data = legislator_json["person"]
+
+      legislator_id = legislator_data["people_id"]
+      party         = legislator_data["party_id"].to_i
+      title         = legislator_data["role"]
+      first_name    = legislator_data["first_name"]
+      middle_name   = legislator_data["middle_name"]
+      last_name     = legislator_data["last_name"]
+      suffix        = legislator_data["suffix"]
+      nickname      = legislator_data["nickname"]
+      district      = legislator_data["district"]
+      chamber       = legislator_data["role_id"]
+
+      Legislator.create(
+        id: legislator_id,
+        party: party,
+        title: title,
+        first_name: first_name,
+        middle_name: middle_name,
+        last_name: last_name,
+        suffix: suffix,
+        nickname: nickname,
+        district: district,
+        chamber: chamber
+      )
+
+      legislator_file.close
+
+      puts "Imported #{title}. #{first_name} #{last_name} (#{district})"
+    end
+
+    puts "\nALL LEGISLATORS IMPORTED!\n\n"
+  end
+
+  desc "Import all data"
+  task all: [:bills, :legislators] do
+    puts "\nALL DATA IMPORTED!"
   end
 end
