@@ -18,8 +18,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232806) do
     t.string "bill_number"
     t.string "title"
     t.string "description"
-    t.string "bill_status"
-    t.string "bill_type"
+    t.integer "bill_status"
+    t.integer "bill_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -48,20 +48,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232806) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "roll_call_votes", force: :cascade do |t|
-    t.bigint "bill_id", null: false
-    t.string "date"
-    t.string "description"
-    t.integer "ayes"
-    t.integer "nays"
-    t.integer "excused"
-    t.integer "absent"
-    t.integer "outcome"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["bill_id"], name: "index_roll_call_votes_on_bill_id"
-  end
-
   create_table "roll_calls", force: :cascade do |t|
     t.bigint "bill_id", null: false
     t.string "date"
@@ -78,6 +64,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232806) do
 
   add_foreign_key "legislator_votes", "legislators"
   add_foreign_key "legislator_votes", "roll_calls"
-  add_foreign_key "roll_call_votes", "bills"
   add_foreign_key "roll_calls", "bills"
 end
