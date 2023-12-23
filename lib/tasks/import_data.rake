@@ -92,49 +92,48 @@ namespace :import_data do
     RollCall.destroy_all
     LegislatorVote.destroy_all
 
-    legislator_directory = "db/data/2023-2023_Regular_Session/vote"
+    vote_directory = "db/data/2023-2023_Regular_Session/vote"
 
-    Dir.each_child(legislator_directory) do |legislator|
-      legislator_file = File.open "#{legislator_directory}/#{legislator}"
+    Dir.each_child(vote_directory) do |roll_call|
+      roll_call_file = File.open "#{vote_directory}/#{roll_call}"
       
-      legislator_json = JSON.load legislator_file
+      roll_call_json = JSON.load roll_call_file
 
-      legislator_data = legislator_json["person"]
+      roll_call_data = roll_call_json["roll_call"]
 
-      legislator_id = legislator_data["people_id"]
-      party         = legislator_data["party_id"].to_i
-      title         = legislator_data["role"]
-      first_name    = legislator_data["first_name"]
-      middle_name   = legislator_data["middle_name"]
-      last_name     = legislator_data["last_name"]
-      suffix        = legislator_data["suffix"]
-      nickname      = legislator_data["nickname"]
-      district      = legislator_data["district"]
-      chamber       = legislator_data["role_id"]
+      roll_call_id = roll_call_data["roll_call_id"]
 
-      Legislator.create(
-        id: legislator_id,
-        party: party,
-        title: title,
-        first_name: first_name,
-        middle_name: middle_name,
-        last_name: last_name,
-        suffix: suffix,
-        nickname: nickname,
-        district: district,
-        chamber: chamber
+      RollCall.create(
+        id: roll_call_id,
+        date: roll_call_data["date"],
+        description: roll_call_data["desc"],
+        ayes: roll_call_data["yea"],
+        nays: roll_call_data["nay"],
+        excused: roll_call_data["absent"],
+        absent: roll_call_data["nv"],
+        outcome: roll_call_data["passed"],
+        chamber: roll_call_data["chamber_id"],
+        bill_id: roll_call_data["bill_id"]
       )
 
-      legislator_file.close
+      roll_call_data["votes"].each do |vote|
+        LegislatorVote.create(
+          legislator_id: vote["people_id"],
+          roll_call_id: roll_call_id,
+          vote: vote["vote_id"]
+        )
+      end
 
-      puts "Imported #{title}. #{first_name} #{last_name} (#{district})"
+      puts "Imported vote: #{roll_call_data["desc"]}"
+
+      roll_call_file.close
     end
 
-    puts "\nALL LEGISLATORS IMPORTED!\n\n"
+    puts "\nALL VOTES IMPORTED!\n\n"
   end
 
   desc "Import all data"
-  task all: [:bills, :legislators] do
+  task all: [:bills, :legislators, :votes] do
     puts "\nALL DATA IMPORTED!"
   end
 end
