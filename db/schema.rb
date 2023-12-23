@@ -57,6 +57,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_22_232806) do
     t.integer "excused"
     t.integer "absent"
     t.integer "outcome"
+    t.integer "chamber"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["bill_id"], name: "index_roll_calls_on_bill_id"

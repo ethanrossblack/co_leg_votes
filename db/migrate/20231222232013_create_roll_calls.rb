@@ -9,6 +9,7 @@ class CreateRollCalls < ActiveRecord::Migration[7.0]
       t.integer :excused
       t.integer :absent
       t.integer :outcome
+      t.integer :chamber
 
       t.timestamps
     end
