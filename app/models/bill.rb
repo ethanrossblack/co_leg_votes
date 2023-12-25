@@ -18,4 +18,12 @@ class Bill < ApplicationRecord
     "Vetoed": 5,
     "Failed": 6
   }
+
+  def house_thirds
+    roll_calls.where("description LIKE ?", "%Third Reading%").where(chamber: "House").order(date: :desc)
+  end
+
+  def senate_thirds
+    roll_calls.where("description LIKE ?", "%Third Reading%").where(chamber: "Senate").order(date: :desc)
+  end
 end
