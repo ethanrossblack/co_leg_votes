@@ -27,4 +27,10 @@ class RollCall < ApplicationRecord
     # 4 is the legislator_vote enum value for "Absent"
     legislators.where(legislator_votes: { vote: 4 })
   end
+
+  def self.house_votes
+    @@house_votes ||= joins(:legislator_votes)
+    .group('roll_calls.id')
+    .having('COUNT(legislator_votes.id) = ?', 65)
+  end
 end

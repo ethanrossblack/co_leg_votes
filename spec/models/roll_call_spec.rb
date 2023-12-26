@@ -32,4 +32,12 @@ RSpec.describe RollCall, type: :model do
       end
     end
   end
+
+  describe 'class methods' do
+    describe '.house_votes' do
+      xit 'returns an array of votes taken by all 65 house legislators' do
+        
+      end
+    end
+  end
 end
